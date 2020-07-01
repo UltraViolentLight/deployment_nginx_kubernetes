@@ -12,6 +12,7 @@ pipeline {
                     img = docker.build("ultraviolentlight/deployment_nginx_kubernetes")
                 }
             }
+        }
         stage('Push Img') {
             steps {
                 script {
