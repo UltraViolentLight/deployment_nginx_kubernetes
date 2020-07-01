@@ -20,6 +20,7 @@ pipeline {
                     }
                 }
             }
+        }
         stage('Run Img') {
             steps {
                 script {
