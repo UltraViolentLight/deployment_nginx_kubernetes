@@ -1,4 +1,8 @@
 pipeline {
+     environment {
+        registry = "ultraviolentlight/deployment_nginx_kubernetes"
+        registryCredential = 'dockerhub'
+     }
      agent any
      stages {    
         stage('Lint HTML') {
@@ -9,14 +13,14 @@ pipeline {
         stage('Build Img') {
             steps {
                 script {
-                    img = docker.build("ultraviolentlight/deployment_nginx_kubernetes:${env.GIT_HASH}")
+                    img = docker.build(registry + ":${env.GIT_HASH}")
                 }
             }
         }
         stage('Push Img') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'credentials-id') {
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
                     img.push()
                     }
                 }
