@@ -30,7 +30,12 @@ Following skillset will be showcased
 ## Requirements
 
 - Jenkins on EC2 with docker installed
+- Jenkins user added to docker gorup 
+```shell
+sudo usermod -a -G docker jenkins
+```
 - AWS subscription in order to deploy to AWS EKS
+
 
 
 ---

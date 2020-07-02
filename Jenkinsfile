@@ -9,17 +9,22 @@ pipeline {
         stage('Build Img') {
             steps {
                 script {
-                    img = docker.build("ultraviolentlight/deployment_nginx_kubernetes")
+                    img = docker.build("ultraviolentlight/deployment_nginx_kubernetes:${env.GIT_HASH}")
                 }
             }
         }
         stage('Push Img') {
             steps {
                 script {
-                    docker.withRegistry('', dockerhubCredentials) {
+                    docker.withRegistry('https://registry.hub.docker.com', 'credentials-id') {
                     img.push()
                     }
                 }
+            }
+        }
+        stage('Scan Img') {
+            steps{
+                aquaMicroscanner imageName: "ultraviolentlight/deployment_nginx_kubernetes:${env.GIT_HASH}", notCompliesCmd: 'exit 4', onDisallowed: 'fail', outputFormat: 'html'
             }
         }
         stage('Run Img') {
