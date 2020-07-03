@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "CapstonProject"
+    },
+    {
+        "ParameterKey": "BootstrapArguments",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "NodeGroupName",
+        "ParameterValue": "worker"
+    },
+    {
+        "ParameterKey": "NodeImageId",
+        "ParameterValue": "ami-06d51e91cea0dac8d"
+    },
+    {
+        "ParameterKey": "NodeInstanceType",
+        "ParameterValue": "t3.medium"
+    }
+]

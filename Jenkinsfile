@@ -38,5 +38,13 @@ pipeline {
                 }
             }
         }
+        stage("Cleaning Img") {
+            steps {
+                script {
+                    sh "echo 'Cleaning Docker'"
+                    sh "docker system prune"
+                }
+            }
+        }        
     }
 }
