@@ -2,7 +2,6 @@ Description: >
     RG / Udacity
     This template deploys EKS worker nodes. Using template from awslabs. 
     https://github.com/awslabs/amazon-eks-ami/blob/master/amazon-eks-nodegroup.yaml
-
 Parameters:
   EnvironmentName:
     Type: String
@@ -79,8 +78,7 @@ Resources:
             - ec2.amazonaws.com
           Action:
           - sts:AssumeRole
-      Path: "/"
-      RoleName: !Join [ "-", [ !Ref 'AWS::StackName', "EKS-Worker-Node-Role" ] ]
+      Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
         - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
@@ -90,14 +88,16 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group for all nodes in the cluster
-      GroupName: !Join [ "", [ !Ref 'AWS::StackName', "-EKS-Worker-Node-Security-Group" ] ]
       VpcId:
         Fn::ImportValue: !Sub "${EnvironmentName}-VPCID"
       Tags:
-      - Key: !Sub "kubernetes.io/cluster/${AWS::StackName}-EKS-Cluster"
-        Value: 'owned'
-      - Key: 'Name'
-        Value: !Join [ "", [ !Ref 'AWS::StackName', "-EKS-Worker-Node-Security-Group" ] ]
+        - Key:
+              !Sub
+                  - "kubernetes.io/cluster/${EksCluster}"
+                  - EksCluster:
+                      Fn::ImportValue:
+                        !Sub "${EnvironmentName}-EKS"
+          Value: owned
 
   AllowAllIPv4TrafficInboundToWorkerNodesFromWorkerNodes:
     Type: AWS::EC2::SecurityGroupIngress
@@ -214,14 +214,18 @@ Resources:
             DeleteOnTermination: true
       UserData:
         Fn::Base64:
-          !Sub |
-            #!/bin/bash
-            set -o xtrace
-            /etc/eks/bootstrap.sh ${EnvironmentName}-EKS ${BootstrapArguments}
-            /opt/aws/bin/cfn-signal --exit-code $? \
-                     --stack  ${AWS::StackName} \
-                     --resource NodeGroup  \
-                     --region ${AWS::Region}
+          !Sub 
+              - |
+                #!/bin/bash
+                set -o xtrace
+                /etc/eks/bootstrap.sh ${EnvironmentName}-EKS ${BootstrapArguments}
+                /opt/aws/bin/cfn-signal --exit-code $? \
+                        --stack  ${AWS::StackName} \
+                        --resource WorkerNodeGroup  \
+                        --region ${AWS::Region}
+              - EksCluster:
+                  Fn::ImportValue:
+                      !Sub "${EnvironmentName}-EKS"
 
   WorkerNodeGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -236,12 +240,22 @@ Resources:
         - Fn::ImportValue: !Sub "${EnvironmentName}-PRI1-SN"
         - Fn::ImportValue: !Sub "${EnvironmentName}-PRI2-SN"
       Tags:
-      - Key: Name
-        Value: !Sub "${EnvironmentName}-EKS-Worker-Node"
-        PropagateAtLaunch: 'true'
-      - Key: !Sub 'kubernetes.io/cluster/${EnvironmentName}-EKS'
-        Value: 'owned'
-        PropagateAtLaunch: 'true'
+        - Key: Name
+          PropagateAtLaunch: "true"
+          Value:
+                !Sub
+                  - "${EksCluster}-${NodeGroupName}-Node"
+                  - EksCluster:
+                      Fn::ImportValue:
+                        !Sub "${EnvironmentName}-EKS"
+        - Key:
+              !Sub
+                - "kubernetes.io/cluster/${EksCluster}"
+                - EksCluster:
+                    Fn::ImportValue:
+                      !Sub "${EnvironmentName}-EKS"
+          PropagateAtLaunch: "true"
+          Value: owned
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MaxBatchSize: '1'

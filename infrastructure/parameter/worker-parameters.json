@@ -13,10 +13,6 @@
     },
     {
         "ParameterKey": "NodeImageId",
-        "ParameterValue": "ami-06d51e91cea0dac8d"
-    },
-    {
-        "ParameterKey": "NodeInstanceType",
-        "ParameterValue": "t3.medium"
+        "ParameterValue": "ami-04611171965b2a219"
     }
 ]
