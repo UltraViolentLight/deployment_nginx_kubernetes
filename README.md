@@ -31,20 +31,19 @@ Following skillset will be showcased
 
 - Jenkins on EC2 with docker installed
 - Jenkins user added to docker gorup 
+- AWS and Docker Hub Credentials configured for Jenkins
 ```shell
 sudo usermod -a -G docker jenkins
 ```
 - AWS subscription in order to deploy to AWS EKS
-
-
 
 ---
 
 ## Example
 
 ```shell
-$ chmod +x scripts/create.sh 
-$ ./scripts/create.sh <STACKNAME> network.yml parameter/network-parameters.json
+$ chmod +x scripts/cluster_worker_eksctl.sh 
+$ ./scripts/cluster_worker_eksctl.sh
 ```
 
 ---
@@ -59,6 +58,13 @@ $ ./scripts/create.sh <STACKNAME> network.yml parameter/network-parameters.json
 > Setup and configure your own AWS subscription in order to deploy the infrastrcuture yourself.
 
 > Setup and configure AWS CLI to run the aws command as shown [here](https://aws.amazon.com/de/cli/).
+
+> Setup and configure AWS EKSCTL to run the aws command as shown [here](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
+
+
+## WebAppUrl
+
+> Check the on a k8s cluster runnning webapp yourself [here](http://aee3e339ebddd11eaa33d0a229d101fe-224345524.us-west-2.elb.amazonaws.com/).
 
 ---
 

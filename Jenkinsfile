@@ -38,6 +38,17 @@ pipeline {
                 }
             }
         }
+        stage('Deploying to EKS') {
+            steps {
+                dir('kubernetes') {
+                    withAWS(credentials: 'aws-credentials', region: 'us-west-2') {
+                            sh "aws eks --region us-west-2 update-kubeconfig --name capstone"
+                            sh 'kubectl apply -f deploy-config-cluster.yaml'
+                            sh "kubectl set image deployment.apps/capstoneproject capstoneproject=ultraviolentlight/deployment_nginx_kubernetes :${env.GIT_COMMIT[0..7]} --record"
+                        }
+                    }
+            }
+        }
         stage("Cleaning Img") {
             steps {
                 script {

@@ -2,7 +2,7 @@
 
 # script to depoy k8s cluster+worker
 eksctl create cluster \
---name prod \
+--name capstone \
 --version 1.14 \
 --region us-west-2 \
 --nodegroup-name standard-workers \
